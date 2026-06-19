@@ -1,0 +1,5 @@
+"Details for Count of Type - Integration Category: #N/A, Type: API",Unnamed: 1,Unnamed: 2,Unnamed: 3,Unnamed: 4,Unnamed: 5,Unnamed: 6,Unnamed: 7,Unnamed: 8,Unnamed: 9,Unnamed: 10,Unnamed: 11,Unnamed: 12
+,,,,,,,,,,,,
+Phase,Application (To System),Interfaces,Source System,Destination System,Integration Category,Type,Process Type,Frequency,Status,Treatment,Last Deployment,Comments
+,14-Procurement ,MW.Procurement.Emailer,only common techincal code related to procurement is present no buisness functinality,Maximo,,API,,,PROD,CAPEX,2021-10-15 06:31:18,Custom integration components deployed in MW controlled environments. Enhances internal software assets with multi‑period benefit
+,14-Procurement ,MW.Procurement.Common,only common techincal code related to procurement is present no buisness functinality,Maximo,,API,,Real Time,PROD,CAPEX,2020-01-31 00:12:36,Custom integration components deployed in MW controlled environments. Enhances internal software assets with multi‑period benefit

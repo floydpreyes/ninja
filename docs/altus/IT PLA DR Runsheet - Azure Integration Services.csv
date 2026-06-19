@@ -1,0 +1,40 @@
+IT DR PLANNING,,,,,,,,,IT DR TESTING,,,,,,,,,,
+Task ID.,Predecessor Task ID,,Task,Planned Effort (Mins),Tasks (Individual/Group),Resource ,Status,Comments,Required for Tabletop Test,Required for QFDR Test,Required for Physical Test,Status,Date Completed,Actioned by,Start Time (HH:MM),End Time (HH:MM),Actual Duration,Test Result (Pass/Fail),Testing Notes
+Pre-requisites (Entry Criteria Checks),,,,,,,,,,,,,,,,,,,
+1,n/a,,Contact IT Operations to confirm the DR exercise window and support roster.,5,Individual,System Manager,,"Confirm incident reference, exercise window, and Cloud Operations attendance.",Yes,Yes,Yes,,,,,,0:00,,
+2,n/a,,Contact Applications to confirm Altus POL application owners and expected business validation approach.,5,Individual,System Manager,,"Confirm Altus/POL SME availability and whether execution is tabletop-only or includes controlled technical runs.",Yes,Yes,Yes,,,,,,0:00,,
+3,n/a,,Contact third-party vendors to confirm support expectations for TechOne, SFTP, and other external dependencies.,5,Individual,System Manager,,"Document who must be notified if shared production-connected dependencies are touched.",Yes,Yes,Yes,,,,,,0:00,,
+4,"1;2;3",,Arrange Cloud Operations support resources required for recovery processes.,10,Group,Cloud Operations,,"Confirm access to Azure, networking, monitoring, and deployment tooling.",Yes,Yes,Yes,,,,,,0:00,,
+5,4,,Check primary-region application workflow health and agree temporary change/freeze controls before DR validation.,15,Group,Applications,,"Capture baseline state for adf-prd-ase-ais, func-prd-ase-pol, and logic-prd-ase-pol.",Yes,Yes,Yes,,,,,,0:00,,
+6,5,,Check Azure service health for AIS and Application Services in Australia Southeast and Australia East.,15,Group,Cloud Operations,,"Record any active Azure incidents before progressing into DR validation.",Yes,Yes,Yes,,,,,,0:00,,
+7,6,,Confirm Azure VPN/private networking and self-hosted integration runtime connectivity to Australia East resources.,15,Group,Cloud Operations,,"Required for DR linked-service, storage, and SFTP validation.",Yes,Yes,Yes,,,,,,0:00,,
+8,7,,Confirm support staff access to DR resources and verify DR storage standard is stprdasepol.,15,Group,"Cloud Operations
+AIS Support",,"Validate access to adf-prd-ae-ais, func-prd-ae-pol, logic-prd-ae-pol, kv-prd-ae-pol, and confirm geo-replicated storage target stprdasepol.",Yes,Yes,Yes,,,,,,0:00,,
+Pre-Requisite Total Estimated Effort (H:MM),,,,1:25,Pre-Requisite Total Actual Effort (H:MM),,,,,,,,,,,,0:00,,
+Recovery Mode (Can Only Begin Post DR Activation),,,,,,,,,,,,,,,,,,,
+9,8,,DR declaration approved and tabletop scope confirmed.,10,Group,AIS Support,,"Decision gate: continue only when scope, approvals, and success criteria are understood by all participants.",Yes,Yes,Yes,,,,,,0:00,,
+10,9,,Confirm AE DR assets are deployed and configured for Altus POL.,20,Group,AIS Support,,"Validate adf-prd-ae-ais, func-prd-ae-pol, logic-prd-ae-pol, kv-prd-ae-pol, managed identity access, and the use of stprdasepol.",Yes,Yes,Yes,,,,,,0:00,,
+11,10,,Confirm APIM dependency is reachable from the DR Function App path.,15,Group,AIS Support,,"APIM remains ase-hosted in the current design. Capture evidence of reachability and document any limitation.",Yes,Yes,Yes,,,,,,0:00,,
+12,10,,Confirm DR storage configuration uses geo-replicated stprdasepol and validate required containers and blob paths.,15,Group,AIS Support,,"Validate access to techone-pol/STAGE, pol-techone/EXPORTS, pol-inflo, inflo-pol, and archive.",Yes,Yes,Yes,,,,,,0:00,,
+13,12,,Technical validation commenced and evidence capture owners assigned.,10,Group,AIS Support,,"Decision gate: stop if missing secrets, missing storage access, or configuration drift remains unresolved.",Yes,Yes,Yes,,,,,,0:00,,
+14,13,,Validate Logic App inbound DR scenario for PROJ-FCR handling.,30,Group,"AIS Support
+Applications",,"Use TechOne_POL_FileTransfer in logic-prd-ae-pol. Confirm controlled PROJ-FCR handling and blob landing in techone-pol/STAGE.",Yes,Yes,Yes,,,,,,0:00,,
+15,14,,Validate ADF DR FCRIMPORT scenario.,30,Group,AIS Support,,"Use adf-prd-ae-ais FCRIMPORT. Prefer manual run or isolated trigger validation because 2_am_trigger contains multiple pipelines.",Yes,Yes,Yes,,,,,,0:00,,
+16,15,,Validate Function App DR archive scenario.,20,Group,AIS Support,,"Run TECHONE_FILES_ARCHIVE. Confirm TechOneFileArchiveProcessor copies techone-pol/STAGE files into the archive container.",Yes,Yes,Yes,,,,,,0:00,,
+17,16,,Validate APIM / Inflo DR scenario and Key Vault dependency resolution.,30,Group,"AIS Support
+Applications",,"Run WORKSPACE. Confirm DR function resolves secrets from kv-prd-ae-pol and can update Altus through APIM.",Yes,Yes,Yes,,,,,,0:00,,
+18,17,,Confirm application and vendor outcomes for DR validation.,20,Group,"Applications
+External Vendors",,"Obtain confirmation that files landed correctly and Altus-facing results match expected business behavior.",Yes,Yes,Yes,,,,,,0:00,,
+19,18,,Record blockers, remediation items, and continue/stop decision.,15,Group,AIS Support,,"Capture shared dependency risks, config drift, and any residual production impact. Escalate blockers before closing recovery mode.",Yes,Yes,Yes,,,,,,0:00,,
+20,19,,Recovery validation sign-off.,10,Group,AIS Support,,"Exercise lead confirms objectives met or deferred with actions.",Yes,Yes,Yes,,,,,,0:00,,
+Recovery Mode Total Estimated Effort (H:MM),,,,3:00,Recovery Mode Total Actual Effort (H:MM),,,,,,,,,,,,0:00,,
+Exit Criteria (Including Technical Verification & Business Verification Testing),,,,,,,,,,,,,,,,,,,
+21,n/a,,Disable DR workflows/triggers and revert temporary filters or file-specific logic.,20,Group,AIS Support,,"Return DR logic, ADF, and temporary workflow changes to the agreed post-test state.",Yes,Yes,Yes,,,,,,0:00,,
+22,21,,Reconfirm primary ASE processing settings and remove temporary exclusions.,15,Group,"AIS Support
+Applications",,"Ensure no unintended PROD workflow, trigger, or routing changes remain after the exercise.",Yes,Yes,Yes,,,,,,0:00,,
+23,22,,Verify AIS and Application Azure services are healthy and have no residual errors.,30,Group,AIS Support,,"Check ADF, Function App, Logic App, Key Vault, Storage, and monitoring posture in both agreed regions.",Yes,Yes,Yes,,,,,,0:00,,
+24,23,,Verify third-party and shared dependencies are back to the agreed operating state.,20,Group,External Vendors,,"Confirm TechOne, SFTP shares, Altus/APIM, and Dataverse dependency state after the exercise.",Yes,Yes,Yes,,,,,,0:00,,
+25,24,,Close exercise and capture actions, owners, due dates, and final outcome.,20,Group,"AIS Support
+System Manager",,"Testing notes must contain final pass/fail, remediation summary, and follow-up owner for each gap.",Yes,Yes,Yes,,,,,,0:00,,
+Exit Criteria Total Estimated Effort (H:MM),,,,1:45,Exit Criteria Total Actual Effort (H:MM),,,,,,,,,,,,0:00,,
+Total Estimated Recovery Effort (H:MM):,,,,6:10,Total Actual Recovery Effort (H:MM):,,,,,,,,,,,,0:00,,
