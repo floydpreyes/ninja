@@ -1,0 +1,56 @@
+name: BW-Bicep-KeyVault-Build-$(Date:yyyyMMdd).$(Rev:r)
+
+resources:
+  repositories:
+    - repository: templates
+      type: git
+      name: ais/ci-cd-patterns
+      ref: refs/tags/2.2.0
+
+trigger:
+  batch: true
+  branches:
+    include:
+      - main
+      - release/*
+      - hotfix/*
+  paths:
+    include:
+      - keyvaults/*
+    exclude:
+      - .gitignore
+      - .gitattributes
+      - .git/*
+      - .vscode/*
+      - pipeline-*.yml
+      - '*.md'
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+extends:
+  template: azure-resources-bicep/az-build.yml@templates
+  parameters:
+    bicepFile: 'keyvaults/infra-kv.bicep'
+    bicepParamsFolder: 'keyvaults/parameters'
+    workingDirectory: "$(System.DefaultWorkingDirectory)"
+    artifactsFeed: 'BW/bw-build'
+    artifactsDescription: 'WTP Birdwatching - Key Vault Bicep Build'
+    artifactNamePrefix: 'azinfra-kv'
+    buildMajorNumber: '1'
+    buildMinorNumber: '0'
+    psRulesCustomFile: 'keyvaults/ps-rule.yaml'
+
+    resourceGroupName:
+      - name: 'rg-devtest-ase-bw'
+        bicepParams: 'dev-kv'
+        location: 'australiasoutheast'
+        serviceConnection: 'azure.devtest-BW'
+      - name: 'rg-uat-ase-bw'
+        bicepParams: 'uat-kv'
+        location: 'australiasoutheast'
+        serviceConnection: 'azure.uat-BW'
+      - name: 'rg-prd-ase-bw'
+        bicepParams: 'prd-kv'
+        location: 'australiasoutheast'
+        serviceConnection: 'azure.prd-BW'

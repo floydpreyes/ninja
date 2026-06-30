@@ -1,0 +1,3 @@
+configuration:
+  AZURE_DEPLOYMENT_NONSENSITIVE_PARAMETER_NAMES:
+  - keys

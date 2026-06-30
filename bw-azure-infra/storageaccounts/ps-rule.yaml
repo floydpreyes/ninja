@@ -1,0 +1,5 @@
+suppression:
+  Azure.Storage.UseReplication:
+  #Suppress PSRule violations for Storage Replication for Dev/UAT (LRS is acceptable for non-prod)
+  - stdevtestasebw
+  - stuatasebw

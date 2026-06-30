@@ -1,0 +1,56 @@
+name: BW-Bicep-StorageAccount-Build-$(Date:yyyyMMdd).$(Rev:r)
+
+resources:
+  repositories:
+    - repository: templates
+      type: git
+      name: ais/ci-cd-patterns
+      ref: refs/tags/2.2.0
+
+trigger:
+  batch: true
+  branches:
+    include:
+      - main
+      - release/*
+      - hotfix/*
+  paths:
+    include:
+      - storageaccounts/*
+    exclude:
+      - .gitignore
+      - .gitattributes
+      - .git/*
+      - .vscode/*
+      - pipeline-*.yml
+      - '*.md'
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+extends:
+  template: azure-resources-bicep/az-build.yml@templates
+  parameters:
+    bicepFile: 'storageaccounts/infra-sa.bicep'
+    bicepParamsFolder: 'storageaccounts/parameters'
+    workingDirectory: "$(System.DefaultWorkingDirectory)"
+    artifactsFeed: 'BW/bw-build'
+    artifactsDescription: 'WTP Birdwatching - Storage Account Bicep Build'
+    artifactNamePrefix: 'azinfra-sa'
+    buildMajorNumber: '1'
+    buildMinorNumber: '0'
+    psRulesCustomFile: 'storageaccounts/ps-rule.yaml'
+
+    resourceGroupName:
+      - name: 'rg-devtest-ase-bw'
+        bicepParams: 'dev-sa'
+        location: 'australiasoutheast'
+        serviceConnection: 'azure.devtest-BW'
+      - name: 'rg-uat-ase-bw'
+        bicepParams: 'uat-sa'
+        location: 'australiasoutheast'
+        serviceConnection: 'azure.uat-BW'
+      - name: 'rg-prd-ase-bw'
+        bicepParams: 'prd-sa'
+        location: 'australiasoutheast'
+        serviceConnection: 'azure.prd-BW'

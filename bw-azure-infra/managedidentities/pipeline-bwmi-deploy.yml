@@ -1,0 +1,67 @@
+name: BW-Bicep-ManagedIdentity-Deploy-$(Date:yyyyMMdd).$(Rev:r)
+
+resources:
+  repositories:
+    - repository: templates
+      type: git
+      name: ais/ci-cd-patterns
+      ref: refs/tags/2.2.0
+
+  pipelines:
+    #do not change (used in pipeline resource variables)
+    - pipeline: infra-build-pipeline
+      source: BW-Bicep-ManagedIdentity-Build
+      trigger:
+        branches:
+          include: #only trigger when source pipeline is run on these branches
+            - main
+            - release/*
+            - hotfix/*
+
+trigger: none
+
+extends:
+  template: azure-resources-bicep/az-deploy.yml@templates
+  parameters:
+    agentPoolDev: 'Azure Pipelines'
+    agentPoolProd: 'Azure Pipelines'
+    artifactNamePrefix: 'azinfra-mi'
+    artifactsFeedPrefix: 'BW/bw'
+    deployEnabled: true
+    serviceConnectionDevTest: 'azure.devtest-BW'
+    serviceConnectionProd: 'azure.prd-BW'
+    serviceConnectionUat: 'azure.uat-BW'
+    promoteVerifyDependsOn:
+      - AZInfraMIBuild01
+    promoteReleaseDependsOn:
+      - AZInfraMIUat01
+
+    deployBuild:
+      - stageName: AZInfraMIBuild01
+        displayName: "Deploy to Dev"
+        environment: "BW-DevTest"
+        resourceGroupName: 'rg-devtest-ase-bw'
+        location: 'australiasoutheast'
+        bicepParams: 'dev-mi'
+        deploymentMode: 'Incremental'
+        deploymentName: 'bw-mi-dev-$(Build.BuildNumber)-$(System.StageAttempt)'
+
+    deployVerify:
+      - stageName: AZInfraMIUat01
+        displayName: "Deploy to UAT"
+        environment: "BW-UAT"
+        resourceGroupName: 'rg-uat-ase-bw'
+        location: 'australiasoutheast'
+        bicepParams: 'uat-mi'
+        deploymentMode: 'Incremental'
+        deploymentName: 'bw-mi-uat-$(Build.BuildNumber)-$(System.StageAttempt)'
+
+    deployRelease:
+      - stageName: AZInfraMIProd01
+        displayName: "Deploy to Prod"
+        environment: "BW-Prod"
+        resourceGroupName: 'rg-prd-ase-bw'
+        location: 'australiasoutheast'
+        bicepParams: 'prd-mi'
+        deploymentMode: 'Incremental'
+        deploymentName: 'bw-mi-prd-$(Build.BuildNumber)-$(System.StageAttempt)'

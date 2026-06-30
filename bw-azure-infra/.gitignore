@@ -1,0 +1,39 @@
+# Bicep build outputs
+!**/parameters/*.json
+!**/bicepconfig.json
+
+# ARM template outputs
+azuredeploy.json
+azuredeploy.parameters.json
+.vscode
+# Bicep module cache
+.bicep/
+
+# Azure CLI / Azure PowerShell
+.azure/
+ServiceDeploymentScripts/
+
+# Terraform (if co-located)
+.terraform/
+*.tfstate
+*.tfstate.backup
+
+# Environment files
+*.env
+.env.*
+
+# OS files
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+.DS_Store
+._*
+
+# IDE / Editor
+.idea/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+.vs/
+*.code-workspace

@@ -1,0 +1,56 @@
+name: BW-Bicep-ManagedIdentity-Build-$(Date:yyyyMMdd).$(Rev:r)
+
+resources:
+  repositories:
+    - repository: templates
+      type: git
+      name: ais/ci-cd-patterns
+      ref: refs/tags/2.2.0
+
+trigger:
+  batch: true
+  branches:
+    include:
+      - main
+      - release/*
+      - hotfix/*
+  paths:
+    include:
+      - managedidentities/*
+    exclude:
+      - .gitignore
+      - .gitattributes
+      - .git/*
+      - .vscode/*
+      - pipeline-*.yml
+      - '*.md'
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+extends:
+  template: azure-resources-bicep/az-build.yml@templates
+  parameters:
+    bicepFile: 'managedidentities/infra-mi.bicep'
+    bicepParamsFolder: 'managedidentities/parameters'
+    workingDirectory: "$(System.DefaultWorkingDirectory)"
+    artifactsFeed: 'BW/bw-build'
+    artifactsDescription: 'WTP Birdwatching - Managed Identity Bicep Build'
+    artifactNamePrefix: 'azinfra-mi'
+    buildMajorNumber: '1'
+    buildMinorNumber: '0'
+    psRulesCustomFile: ''
+
+    resourceGroupName:
+      - name: 'rg-devtest-ase-bw'
+        bicepParams: 'dev-mi'
+        location: 'australiasoutheast'
+        serviceConnection: 'azure.devtest-BW'
+      - name: 'rg-uat-ase-bw'
+        bicepParams: 'uat-mi'
+        location: 'australiasoutheast'
+        serviceConnection: 'azure.uat-BW'
+      - name: 'rg-prd-ase-bw'
+        bicepParams: 'prd-mi'
+        location: 'australiasoutheast'
+        serviceConnection: 'azure.prd-BW'
